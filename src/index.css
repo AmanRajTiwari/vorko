@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.3);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 217, 255, 0.5);
+}
+
+/* Performance optimizations */
+@layer base {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Smooth animations */
+@layer components {
+    .glass-effect {
+        @apply backdrop-blur-md bg-white/5 border border-white/10 rounded-xl;
+        will-change: auto;
+    }
+
+    .glass-effect-sm {
+        @apply backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg;
+        will-change: auto;
+    }
+
+    .glow-text {
+        background: linear-gradient(135deg, #00d9ff 0%, #a78bfa 50%, #3b82f6 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        will-change: auto;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #00d9ff 0%, #a78bfa 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        will-change: auto;
+    }
+
+    /* GPU acceleration for animated elements */
+    .animated-element {
+        transform: translateZ(0);
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+
+    /* Optimized scroll performance */
+    nav {
+        will-change: auto;
+    }
+
+    section {
+        will-change: auto;
+    }
+}
