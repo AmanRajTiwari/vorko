@@ -26,7 +26,7 @@ export default function DashboardPage() {
   // Loading guard - wait for both auth and student data
   if (authLoading || studentLoading) {
     return (
-      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         <div className="w-full h-1 bg-gray-700 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
@@ -42,7 +42,7 @@ export default function DashboardPage() {
   // User null guard - redirect or show login message
   if (!user || !isAuthenticated) {
     return (
-      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-bold text-gray-400 mb-2">
             Authentication Required
@@ -58,7 +58,7 @@ export default function DashboardPage() {
   // Profile null guard
   if (!profile) {
     return (
-      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-bold text-gray-400 mb-2">
             Profile Not Found
@@ -73,11 +73,11 @@ export default function DashboardPage() {
 
   // Fetch real data from Supabase
   const { project, loading: projectLoading } = useStudentDashboardProject(
-    user.id
+    user.id,
   );
   const { tasks, stats, loading: tasksLoading } = useStudentTasks(user.id);
   const { meetings, loading: meetingsLoading } = useStudentMeetings(
-    project?.id
+    project?.id,
   );
   const { reports, loading: reportsLoading } = useStudentReports(user.id);
 
@@ -140,7 +140,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 overflow-x-hidden">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8 overflow-x-hidden">
       {/* Loading Indicator */}
       {(projectLoading || tasksLoading) && (
         <div className="w-full h-1 bg-gray-700 rounded-full overflow-hidden">
@@ -217,9 +217,16 @@ export default function DashboardPage() {
                 Active Project
               </p>
               <p className="text-base sm:text-lg font-semibold">
-                {activeProject?.name}
+                {activeProject?.title || "No active project"}
               </p>
             </div>
+
+            {/* No Project Message */}
+            {!activeProject && (
+              <div className="text-center py-8">
+                <p className="text-gray-400">No active project</p>
+              </div>
+            )}
 
             {/* Progress Bar */}
             <div>
@@ -228,13 +235,13 @@ export default function DashboardPage() {
                   Overall Progress
                 </p>
                 <p className="text-xs sm:text-sm font-bold text-accent">
-                  {activeProject?.progress}%
+                  {stats?.progress || 0}%
                 </p>
               </div>
               <div className="w-full h-2 sm:h-3 bg-white/10 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${activeProject?.progress}%` }}
+                  animate={{ width: `${stats?.progress || 0}%` }}
                   transition={{ duration: 0.8 }}
                   className="h-full bg-gradient-to-r from-accent to-accent-purple rounded-full"
                 />
@@ -322,15 +329,16 @@ export default function DashboardPage() {
           <div className="glass-effect p-4 sm:p-6 rounded-xl border border-white/10">
             <p className="text-xs text-gray-400 mb-2 sm:mb-3">YOUR MENTOR</p>
             <p className="text-sm sm:text-base font-bold mb-1">
-              {activeProject?.mentor.name}
+              {activeProject?.mentor?.name || "Not assigned"}
             </p>
             <p className="text-xs text-gray-400 mb-3 sm:mb-4">
-              {activeProject?.mentor.expertise}
+              {activeProject?.mentor?.expertise || "Mentor details unavailable"}
             </p>
             <motion.button
               className="w-full px-3 sm:px-4 py-2 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 transition-colors text-xs sm:text-sm font-semibold min-h-[44px]"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              disabled={!activeProject?.mentor}
             >
               Message Mentor
             </motion.button>

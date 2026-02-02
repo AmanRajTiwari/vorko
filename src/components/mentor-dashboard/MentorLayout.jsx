@@ -30,7 +30,7 @@ export default function MentorLayout({ children, pageTitle, pageDescription }) {
   };
 
   return (
-    <div className="flex h-screen bg-dark text-white overflow-hidden">
+    <div className="min-h-screen flex bg-dark text-white">
       {/* Sidebar */}
       <MentorSidebar
         isOpen={sidebarOpen}
@@ -38,7 +38,7 @@ export default function MentorLayout({ children, pageTitle, pageDescription }) {
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         {/* Top Bar */}
         <MentorTopBar
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
@@ -46,13 +46,14 @@ export default function MentorLayout({ children, pageTitle, pageDescription }) {
           pageTitle={pageTitle}
         />
 
-        {/* Page Content */}
+        {/* Page Content (window scroll) */}
         <motion.main
-          className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8"
+          className="flex-1 p-4 sm:p-6 lg:p-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
+          {" "}
           {/* Page Header */}
           {pageTitle && (
             <motion.div className="mb-8" variants={itemVariants}>
@@ -64,7 +65,6 @@ export default function MentorLayout({ children, pageTitle, pageDescription }) {
               )}
             </motion.div>
           )}
-
           {/* Page Content */}
           {children}
         </motion.main>

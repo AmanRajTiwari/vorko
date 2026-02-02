@@ -76,7 +76,7 @@ export default function StudentSidebar({ onClose }) {
   return (
     <motion.div
       initial={false}
-      animate={{ width: isCollapsed ? 80 : 280 }}
+      animate={{ width: isCollapsed ? 64 : 256 }}
       transition={{ duration: 0.3 }}
       className="relative bg-dark border-r border-white/10 flex flex-col overflow-hidden"
     >
@@ -104,7 +104,7 @@ export default function StudentSidebar({ onClose }) {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+      <nav className="flex-1 px-3 py-4 space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);

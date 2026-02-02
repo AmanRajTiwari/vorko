@@ -23,7 +23,9 @@ export function useStudentTasks(userId) {
 
     const fetchTasks = async () => {
       try {
+        // Guard: Prevent API calls without valid user
         if (!userId) {
+          console.warn("[useStudentTasks] No userId provided");
           setLoading(false);
           return;
         }

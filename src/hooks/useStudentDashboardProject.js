@@ -24,25 +24,12 @@ export function useStudentDashboardProject(userId) {
           return;
         }
 
-        // First, get project data from project_members → projects
+        // Get project data directly from projects table
         const { data: projectData, error: projectErr } = await supabase
-          .from("project_members")
-          .select(
-            `
-            project_id,
-            projects (
-              id,
-              title,
-              description,
-              status,
-              progress,
-              created_at,
-              mentor_id
-            )
-          `
-          )
-          .eq("student_id", userId)
-          .single();
+          .from("projects")
+          .select("id, title, description, created_at")
+          .limit(1)
+          .maybeSingle();
 
         if (projectErr) {
           console.warn("Project fetch failed", projectErr?.message);
@@ -55,8 +42,7 @@ export function useStudentDashboardProject(userId) {
           return;
         }
 
-        const project = projectData?.projects;
-        if (!project) {
+        if (!projectData) {
           if (isMounted) {
             setProject(null);
             setMentor(null);
@@ -66,22 +52,9 @@ export function useStudentDashboardProject(userId) {
           return;
         }
 
-        // Separately fetch mentor profile from profiles table
-        // Note: Only query columns that exist (no expertise column)
-        const { data: mentorData, error: mentorErr } = await supabase
-          .from("profiles")
-          .select("id, name, email")
-          .eq("id", project.mentor_id)
-          .single();
-
-        if (mentorErr) {
-          console.warn("Mentor fetch failed", mentorErr?.message);
-          // Don't fail the whole request if mentor fetch fails
-        }
-
         if (isMounted) {
-          setProject(project);
-          setMentor(mentorData || null);
+          setProject(projectData);
+          setMentor(null); // No mentor data since we removed mentor_id from query
           setError(null);
         }
       } catch (err) {

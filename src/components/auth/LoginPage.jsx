@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { AlertCircle, Check } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginPage() {
@@ -13,6 +13,9 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const [pendingData, setPendingData] = useState({
     name: null,
@@ -45,23 +48,11 @@ export default function LoginPage() {
       const dashboardUrl = getDashboardUrl();
       console.log(
         "[LoginPage] User authenticated, redirecting to:",
-        dashboardUrl
+        dashboardUrl,
       );
       navigate(dashboardUrl, { replace: true });
     }
   }, [isAuthenticated, navigate, getDashboardUrl]);
-
-  // Demo credentials info
-  const demoCredentials = {
-    student: {
-      email: "student@vorko.com",
-      password: "student123",
-    },
-    mentor: {
-      email: "mentor@vorko.com",
-      password: "mentor123",
-    },
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,14 +61,6 @@ export default function LoginPage() {
       [name]: value,
     }));
     setError("");
-  };
-
-  const handleDemoLogin = (role) => {
-    const credentials = demoCredentials[role];
-    setFormData({
-      email: credentials.email,
-      password: credentials.password,
-    });
   };
 
   const handleSubmit = async (e) => {
@@ -95,7 +78,7 @@ export default function LoginPage() {
         formData.email,
         formData.password,
         pendingData.name || undefined,
-        pendingData.role || undefined
+        pendingData.role || undefined,
       );
 
       // Show success message
@@ -119,174 +102,286 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark to-dark-lighter flex items-center justify-center p-4">
-      {/* Background decorations */}
+    <div className="relative min-h-screen bg-gradient-to-br from-dark via-[#0f1428] to-dark-lighter flex items-center justify-center p-4 overflow-hidden">
+      {/* Premium background gradient orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-accent/10 to-accent-purple/10 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute bottom-0 -left-40 w-96 h-96 bg-gradient-to-tr from-accent-purple/10 to-accent-blue/10 rounded-full blur-3xl opacity-20"></div>
+        {/* Top-right accent orb */}
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.4, 0.6, 0.4],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-accent/20 to-accent-purple/10 rounded-full blur-3xl"
+        />
+
+        {/* Bottom-left accent orb */}
+        <motion.div
+          animate={{
+            scale: [1.1, 1, 1.1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+          className="absolute bottom-0 -left-48 w-96 h-96 bg-gradient-to-tr from-accent-purple/15 to-accent-blue/10 rounded-full blur-3xl"
+        />
+
+        {/* Top-left accent orb */}
+        <div className="absolute top-1/4 -left-24 w-64 h-64 bg-gradient-to-br from-accent-blue/10 to-transparent rounded-full blur-3xl opacity-30" />
       </div>
 
+      {/* Premium card container */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{
+          duration: 0.6,
+          ease: [0.23, 1, 0.32, 1], // custom ease curve like Linear.app
+        }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Card */}
-        <div className="glass-effect rounded-2xl p-8 border border-accent/10 shadow-2xl">
-          {/* Logo & Title */}
+        {/* Glow backdrop effect */}
+        <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-accent/20 to-accent-purple/10 blur-2xl opacity-40" />
+
+        {/* Main card */}
+        <div className="relative backdrop-blur-2xl bg-gradient-to-br from-white/8 via-white/5 to-white/3 rounded-2xl p-8 border border-white/15 shadow-2xl">
+          {/* Decorative top border accent */}
+          <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+          {/* Logo & Title Section */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="text-center mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="text-center mb-10"
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent-purple rounded-lg flex items-center justify-center font-bold text-dark text-xl">
-                V
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{
+                delay: 0.2,
+                type: "spring",
+                stiffness: 200,
+                damping: 15,
+              }}
+              className="flex items-center justify-center mb-5"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent to-accent-purple rounded-xl blur-lg opacity-50" />
+                <div className="relative w-12 h-12 bg-gradient-to-br from-accent to-accent-purple rounded-xl flex items-center justify-center font-bold text-dark text-lg shadow-lg">
+                  V
+                </div>
               </div>
-              <span className="text-2xl font-bold glow-text">Vorko</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-gray-400">Sign in to your account</p>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.25, duration: 0.5 }}
+              className="text-3xl font-bold text-white mb-3 tracking-tight"
+            >
+              Welcome back
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-sm text-gray-400 leading-relaxed"
+            >
+              Sign in to your Vorko account to continue
+            </motion.p>
           </motion.div>
 
           {/* Error Alert */}
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 flex items-gap-2 gap-2"
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-5 overflow-hidden"
             >
-              <AlertCircle
-                size={18}
-                className="text-red-400 flex-shrink-0 mt-0.5"
-              />
-              <p className="text-sm text-red-400">{error}</p>
+              <div className="p-4 rounded-xl bg-gradient-to-br from-red-500/15 to-red-500/5 border border-red-500/30 backdrop-blur-sm flex items-start gap-3">
+                <AlertCircle
+                  size={18}
+                  className="text-red-400 flex-shrink-0 mt-0.5"
+                />
+                <p className="text-sm text-red-300 font-medium">{error}</p>
+              </div>
             </motion.div>
           )}
 
           {/* Success Alert */}
           {success && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/30 flex items-gap-2 gap-2"
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-5 overflow-hidden"
             >
-              <Check
-                size={18}
-                className="text-green-400 flex-shrink-0 mt-0.5"
-              />
-              <p className="text-sm text-green-400">{success}</p>
+              <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/15 to-green-500/5 border border-green-500/30 backdrop-blur-sm flex items-start gap-3">
+                <Check
+                  size={18}
+                  className="text-green-400 flex-shrink-0 mt-0.5"
+                />
+                <p className="text-sm text-green-300 font-medium">{success}</p>
+              </div>
             </motion.div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-            {/* Email */}
+          <form onSubmit={handleSubmit} className="space-y-5 mb-8">
+            {/* Email Input */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
             >
-              <label className="text-sm font-medium text-gray-300 mb-2 block">
+              <label className="text-xs font-semibold text-gray-300 mb-2.5 block uppercase tracking-wider opacity-80">
                 Email Address
               </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="name@vorko.com"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField("email")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="you@company.com"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/8 focus:ring-2 focus:ring-accent/20 backdrop-blur-sm"
+                />
+                {focusedField === "email" && (
+                  <motion.div
+                    layoutId="email-focus-glow"
+                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  />
+                )}
+              </div>
             </motion.div>
 
-            {/* Password */}
+            {/* Password Input */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
             >
-              <label className="text-sm font-medium text-gray-300 mb-2 block">
+              <label className="text-xs font-semibold text-gray-300 mb-2.5 block uppercase tracking-wider opacity-80">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField("password")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/8 focus:ring-2 focus:ring-accent/20 backdrop-blur-sm"
+                />
+                <motion.button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </motion.button>
+                {focusedField === "password" && (
+                  <motion.div
+                    layoutId="password-focus-glow"
+                    className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  />
+                )}
+              </div>
             </motion.div>
 
             {/* Submit Button */}
             <motion.button
               type="submit"
               disabled={isLoading}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="w-full mt-6 py-2.5 px-4 rounded-lg font-medium bg-gradient-to-r from-accent to-accent-purple text-dark shadow-glow hover:shadow-lg transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              transition={{ delay: 0.45, duration: 0.4 }}
+              className="w-full mt-8 py-3.5 px-4 rounded-xl font-semibold bg-gradient-to-r from-accent via-accent-purple to-accent-blue text-dark shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              whileHover={!isLoading ? { scale: 1.02 } : {}}
+              whileTap={!isLoading ? { scale: 0.98 } : {}}
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {isLoading ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full"
+                    />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <motion.div
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <ArrowRight size={18} />
+                    </motion.div>
+                  </>
+                )}
+              </span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-accent/0 via-white/20 to-accent/0"
+                initial={{ x: "-100%" }}
+                animate={!isLoading ? { x: "100%" } : {}}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
             </motion.button>
           </form>
 
-          {/* Demo Credentials */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="space-y-2 mb-6 p-4 rounded-lg bg-accent/5 border border-accent/20"
-          >
-            <p className="text-xs text-gray-400 font-medium">
-              Demo Credentials:
-            </p>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("student")}
-                className="w-full text-left text-xs py-2 px-2 rounded bg-accent/10 hover:bg-accent/20 text-accent transition-colors"
-              >
-                📚 Student: student@vorko.com / student123
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin("mentor")}
-                className="w-full text-left text-xs py-2 px-2 rounded bg-accent/10 hover:bg-accent/20 text-accent transition-colors"
-              >
-                👨‍🏫 Mentor: mentor@vorko.com / mentor123
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Links */}
+          {/* Footer Links */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-2 text-center text-sm text-gray-400"
+            transition={{ delay: 0.5, duration: 0.4 }}
+            className="space-y-3 text-center text-sm"
           >
-            <p>
+            <p className="text-gray-400">
               Don't have an account?{" "}
               <Link
                 to="/signup"
-                className="text-accent hover:text-accent-purple transition-colors font-medium"
+                className="text-accent hover:text-accent-purple font-semibold transition-colors duration-200 relative group"
               >
-                Sign up here
+                Sign up
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300" />
               </Link>
             </p>
             <Link
               to="/"
-              className="block text-accent hover:text-accent-purple transition-colors font-medium"
+              className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 font-medium"
             >
-              ← Back to Home
+              <span>←</span> Back to Home
             </Link>
           </motion.div>
+
+          {/* Decorative bottom border accent */}
+          <div className="absolute bottom-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-accent-purple/40 to-transparent" />
         </div>
       </motion.div>
     </div>
