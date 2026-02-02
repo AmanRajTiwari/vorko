@@ -22,7 +22,7 @@ export default function StudentLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="w-screen h-screen bg-dark text-white overflow-hidden flex flex-col lg:flex-row">
+    <div className="min-h-screen flex">
       {/* ===== MOBILE OVERLAY ===== */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -37,8 +37,8 @@ export default function StudentLayout({ children }) {
         )}
       </AnimatePresence>
 
-      {/* ===== DESKTOP SIDEBAR (lg+ only) ===== */}
-      <div className="hidden lg:flex lg:w-80 lg:flex-col lg:flex-shrink-0 lg:bg-dark lg:border-r lg:border-white/10 lg:z-20">
+      {/* ===== DESKTOP SIDEBAR (md+ only) ===== */}
+      <div className="hidden md:flex md:w-64 md:flex-col md:flex-shrink-0 md:bg-dark md:border-r md:border-white/10 md:fixed md:left-0 md:top-0 md:h-screen md:z-40 md:overflow-hidden">
         <StudentSidebar />
       </div>
 
@@ -50,7 +50,7 @@ export default function StudentLayout({ children }) {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
-            className="fixed left-0 top-0 h-screen w-80 z-40 bg-dark lg:hidden overflow-y-auto"
+            className="fixed left-0 top-0 h-screen w-80 z-40 bg-dark lg:hidden overflow-hidden"
           >
             <StudentSidebar onClose={() => setSidebarOpen(false)} />
           </motion.div>
@@ -58,17 +58,17 @@ export default function StudentLayout({ children }) {
       </AnimatePresence>
 
       {/* ===== MAIN CONTENT AREA ===== */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0 w-full">
+      <div className="flex-1 ml-0 md:ml-64 flex flex-col">
         {/* Top Navigation Bar */}
-        <StudentTopBar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
+        <div className="sticky top-0 z-50">
+          <StudentTopBar
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
+        </div>
 
-        {/* Main Content - Scrollable */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-dark-lighter w-full">
-          {children}
-        </main>
+        {/* Main Content (window scroll) */}
+        <main className="flex-1 bg-dark-lighter pt-6 px-6">{children}</main>
       </div>
     </div>
   );

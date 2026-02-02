@@ -16,7 +16,9 @@ export function useStudentReports(userId) {
 
     const fetchReports = async () => {
       try {
+        // Guard: Prevent API calls without valid user
         if (!userId) {
+          console.warn("[useStudentReports] No userId provided");
           setLoading(false);
           return;
         }

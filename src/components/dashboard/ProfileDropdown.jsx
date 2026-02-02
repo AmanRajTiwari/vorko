@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Settings, LogOut } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { signOut } from "../../lib/auth";
 import { useNavigate } from "react-router-dom";
@@ -53,11 +54,11 @@ export function ProfileDropdown() {
       {/* Profile Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="flex items-center gap-3 p-2 hover:bg-white/10 rounded-lg transition-colors"
         aria-label="Profile menu"
       >
         {/* Avatar */}
-        <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+        <div className="w-8 h-8 bg-gradient-to-br from-accent to-accent-purple rounded-full flex items-center justify-center text-white font-bold">
           {context.profile.avatar_url ? (
             <img
               src={context.profile.avatar_url}
@@ -70,13 +71,16 @@ export function ProfileDropdown() {
         </div>
 
         {/* Name (hidden on small screens) */}
-        <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
-          {context.profile.name || "Student"}
-        </span>
+        <div className="hidden lg:flex flex-col items-start">
+          <p className="text-sm font-semibold text-white">
+            {context.profile.name || "Student"}
+          </p>
+          <p className="text-xs text-gray-400">Student</p>
+        </div>
 
         {/* Chevron Icon */}
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${
+          className={`w-4 h-4 text-gray-400 transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
           fill="none"
@@ -94,13 +98,13 @@ export function ProfileDropdown() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[100]">
+        <div className="fixed right-4 top-20 z-[9999] w-64 bg-dark-lighter border border-white/10 rounded-xl shadow-xl">
           {/* Profile Info */}
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="px-4 py-3 border-b border-white/10">
+            <p className="text-sm font-semibold text-white">
               {context.profile.name || "Student"}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            <p className="text-xs text-gray-400 truncate">
               {context.profile.email}
             </p>
           </div>
@@ -110,32 +114,24 @@ export function ProfileDropdown() {
             <button
               onClick={() => {
                 setIsOpen(false);
-                navigate("/dashboard/profile");
+                navigate("/student/settings");
               }}
-              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="w-full px-4 py-3 text-left text-sm text-gray-300 hover:bg-white/5 transition-colors flex items-center gap-3"
             >
-              📋 My Profile
-            </button>
-
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                navigate("/dashboard/settings");
-              }}
-              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              ⚙️ Settings
+              <Settings size={18} className="text-gray-400" />
+              <span>Settings</span>
             </button>
           </div>
 
           {/* Logout Button */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-2">
+          <div className="border-t border-white/10 p-2">
             <button
               onClick={handleLogout}
               disabled={isLoading}
-              className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-3"
             >
-              {isLoading ? "🔄 Logging out..." : "🚪 Logout"}
+              <LogOut size={18} />
+              <span>{isLoading ? "Logging out..." : "Logout"}</span>
             </button>
           </div>
         </div>

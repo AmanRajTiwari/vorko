@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 export default function Hero({ onNavigate }) {
@@ -11,6 +11,8 @@ export default function Hero({ onNavigate }) {
     primary: { x: 0, y: 0 },
     secondary: { x: 0, y: 0 },
   });
+  const vivaParallaxX = useMotionValue(0);
+  const vivaParallaxY = useMotionValue(0);
   const ticking = useRef(false);
   const magnetTicking = useRef(false);
 
@@ -22,20 +24,48 @@ export default function Hero({ onNavigate }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Debug: Log parallax changes
+  useEffect(() => {
+    console.log(
+      "vivaParallaxX:",
+      vivaParallaxX.get(),
+      "vivaParallaxY:",
+      vivaParallaxY.get(),
+    );
+  }, []);
+
   const handleMouseMove = (e) => {
+    console.log("handleMouseMove called");
     // Skip on mobile
     if (isMobile) return;
 
+    // Early return if section ref is not set
     if (!sectionRef.current) return;
 
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
+        // Get the section element from ref or find it
+        const section = sectionRef.current;
+        if (!section) {
+          console.log("Section ref not found");
+          return;
+        }
+
         const { clientX, clientY } = e;
-        const { left, top, width, height } =
-          e.currentTarget.getBoundingClientRect();
+        const { left, top, width, height } = section.getBoundingClientRect();
+        console.log("Mouse position:", { clientX, clientY });
+        console.log("Section rect:", { left, top, width, height });
         const x = (clientX - left - width / 2) / 30;
         const y = (clientY - top - height / 2) / 30;
         setMousePosition({ x, y });
+
+        // Parallax for Viva text (max 4px)
+        const parallaxX = ((clientX - left - width / 2) / width) * 4;
+        const parallaxY = ((clientY - top - height / 2) / height) * 4;
+        console.log("Calculated parallax:", { parallaxX, parallaxY });
+        vivaParallaxX.set(parallaxX);
+        vivaParallaxY.set(parallaxY);
+
         ticking.current = false;
       });
       ticking.current = true;
@@ -101,40 +131,91 @@ export default function Hero({ onNavigate }) {
     },
   };
 
-  // Headline word animation variants
-  const headlineContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const headlineWordVariants = {
+  // Headline word animation variants - Enhanced tagline words
+  const fromWordVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  };
+
+  const ideaWordVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: 0.15,
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  };
+
+  const toWordVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delay: 0.3,
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const vivaWordVariants = {
+    hidden: { opacity: 0, scale: 0.85 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: 0.45,
         duration: 0.5,
         ease: [0.25, 0.46, 0.45, 0.94],
       },
     },
   };
 
-  // Underline animation
+  // Glow animation for "Idea"
+  const ideaGlowVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: [0, 0.6, 0],
+      transition: {
+        delay: 0.15,
+        duration: 1.2,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  // Underline animation - draws left to right
   const underlineVariants = {
     hidden: { scaleX: 0, opacity: 0 },
     visible: {
       scaleX: 1,
       opacity: 1,
       transition: {
-        delay: 0.6,
-        duration: 0.5,
+        delay: 0.7,
+        duration: 0.6,
         ease: "easeOut",
+      },
+    },
+  };
+
+  // Gradient pulse for Viva
+  const vivaPulseVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        delay: 0.45,
+        staggerChildren: 0.1,
       },
     },
   };
@@ -146,7 +227,7 @@ export default function Hero({ onNavigate }) {
       opacity: 1,
       y: 0,
       transition: {
-        delay: 0.9,
+        delay: 1.0,
         duration: 0.5,
         ease: "easeOut",
       },
@@ -177,7 +258,8 @@ export default function Hero({ onNavigate }) {
 
   return (
     <section
-      className="relative min-h-screen w-full pt-28 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      ref={sectionRef}
+      className="relative w-full pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-visible min-h-screen flex items-center"
       onMouseMove={handleMouseMove}
     >
       <div className="max-w-7xl mx-auto">
@@ -187,37 +269,139 @@ export default function Hero({ onNavigate }) {
           initial="hidden"
           animate="visible"
         >
-          {/* Main Headline */}
+          {/* Main Headline - Enhanced Animated Tagline */}
           <motion.div
-            variants={headlineContainerVariants}
+            className="text-center mb-8"
             initial="hidden"
             animate="visible"
-            className="text-center mb-8"
           >
-            <div className="overflow-hidden">
-              <motion.h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight mb-4">
-                <motion.span
-                  className="block glow-text mb-2"
-                  variants={headlineWordVariants}
+            {/* Premium Animated Tagline */}
+            <div style={{ overflow: "visible" }}>
+              <motion.h1
+                className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight"
+                style={{ overflow: "visible" }}
+              >
+                <span className="inline-block mr-3">
+                  <motion.span
+                    className="inline-block glow-text"
+                    variants={fromWordVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    From
+                  </motion.span>
+                </span>
+                <span className="inline-block relative mr-3">
+                  <motion.span
+                    className="inline-block"
+                    variants={ideaWordVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <motion.span
+                      className="inline-block text-accent"
+                      animate={{
+                        textShadow: [
+                          "0 0 0px rgba(0, 217, 255, 0)",
+                          "0 0 20px rgba(0, 217, 255, 0.6)",
+                          "0 0 0px rgba(0, 217, 255, 0)",
+                        ],
+                      }}
+                      transition={{
+                        delay: 0.15,
+                        duration: 1.2,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      Idea
+                    </motion.span>
+                  </motion.span>
+                </span>
+                <span className="inline-block mr-3">
+                  <motion.span
+                    className="inline-block text-gray-400"
+                    variants={toWordVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    to
+                  </motion.span>
+                </span>
+                <motion.div
+                  style={{
+                    display: "inline-block",
+                    willChange: "transform",
+                    overflow: "visible",
+                    x: vivaParallaxX,
+                    y: vivaParallaxY,
+                  }}
                 >
-                  From Idea
-                </motion.span>
-                <motion.span
-                  className="block gradient-text"
-                  variants={headlineWordVariants}
-                >
-                  to Viva
-                </motion.span>
+                  <motion.span
+                    className="inline-block gradient-text relative"
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{
+                      opacity: [1, 0.85, 1],
+                      scale: 1,
+                    }}
+                    transition={{
+                      scale: {
+                        delay: 0.45,
+                        duration: 0.5,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      },
+                      opacity: {
+                        delay: 1.2,
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      },
+                    }}
+                  >
+                    <motion.span
+                      className="inline-block"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                      }}
+                      transition={{
+                        delay: 1.2,
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(270deg, #00d9ff, #a78bfa, #3b82f6, #00d9ff)",
+                        backgroundSize: "200% 200%",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      Viva
+                    </motion.span>
+                  </motion.span>
+                </motion.div>
               </motion.h1>
             </div>
 
-            {/* Animated Underline */}
-            <motion.div
-              className="h-1 w-20 bg-gradient-to-r from-accent to-accent-purple mx-auto rounded-full origin-left"
-              variants={underlineVariants}
-              initial="hidden"
-              animate="visible"
-            ></motion.div>
+            {/* Animated Underline - Draws left to right with glow */}
+            <motion.div className="flex justify-center mt-6 mb-4">
+              <motion.div
+                className="h-1 bg-gradient-to-r from-accent via-accent to-accent-purple rounded-full relative"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{
+                  delay: 0.7,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+                style={{
+                  width: "80px",
+                  originX: 0,
+                  boxShadow: "0 0 12px rgba(0, 217, 255, 0.4)",
+                }}
+              />
+            </motion.div>
           </motion.div>
 
           {/* Subheading */}

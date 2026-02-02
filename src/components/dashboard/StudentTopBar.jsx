@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -21,8 +21,29 @@ export default function StudentTopBar({ sidebarOpen, setSidebarOpen }) {
   const { activeProject, notifications, markNotificationAsRead } =
     useContext(StudentDataContext);
   const [showNotifications, setShowNotifications] = useState(false);
+  const notificationsRef = useRef(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // Close notifications on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
 
   return (
     <div className="w-full h-16 lg:h-20 bg-dark border-b border-white/10 flex items-center justify-between px-4 lg:px-8 gap-4 overflow-x-hidden">
@@ -56,7 +77,7 @@ export default function StudentTopBar({ sidebarOpen, setSidebarOpen }) {
       {/* Right - Actions */}
       <div className="flex items-center gap-2 lg:gap-6">
         {/* Notifications - Icon only on mobile */}
-        <div className="relative">
+        <div className="relative" ref={notificationsRef}>
           <motion.button
             onClick={() => setShowNotifications(!showNotifications)}
             className="relative p-2 hover:bg-white/10 rounded-lg transition-colors group"
@@ -82,7 +103,7 @@ export default function StudentTopBar({ sidebarOpen, setSidebarOpen }) {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-full sm:w-80 bg-dark-lighter border border-white/10 rounded-xl shadow-xl z-[100] max-h-96 overflow-y-auto mx-2 sm:mx-0"
+                className="fixed right-20 top-20 w-full sm:w-80 bg-dark-lighter border border-white/10 rounded-xl shadow-xl z-[60] max-h-96 overflow-y-auto mx-2 sm:mx-0"
               >
                 <div className="p-4 border-b border-white/10">
                   <h3 className="font-bold">Notifications</h3>

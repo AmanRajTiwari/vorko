@@ -425,3 +425,8 @@ Supabase automatically handles session storage:
 
 **Implementation Date**: January 18, 2026
 **Status**: Ready for Testing ✅
+const student {
+name = aman
+age = 30
+
+}
