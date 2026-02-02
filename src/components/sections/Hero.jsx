@@ -24,18 +24,7 @@ export default function Hero({ onNavigate }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Debug: Log parallax changes
-  useEffect(() => {
-    console.log(
-      "vivaParallaxX:",
-      vivaParallaxX.get(),
-      "vivaParallaxY:",
-      vivaParallaxY.get(),
-    );
-  }, []);
-
   const handleMouseMove = (e) => {
-    console.log("handleMouseMove called");
     // Skip on mobile
     if (isMobile) return;
 
@@ -46,15 +35,10 @@ export default function Hero({ onNavigate }) {
       window.requestAnimationFrame(() => {
         // Get the section element from ref or find it
         const section = sectionRef.current;
-        if (!section) {
-          console.log("Section ref not found");
-          return;
-        }
+        if (!section) return;
 
         const { clientX, clientY } = e;
         const { left, top, width, height } = section.getBoundingClientRect();
-        console.log("Mouse position:", { clientX, clientY });
-        console.log("Section rect:", { left, top, width, height });
         const x = (clientX - left - width / 2) / 30;
         const y = (clientY - top - height / 2) / 30;
         setMousePosition({ x, y });
@@ -62,7 +46,6 @@ export default function Hero({ onNavigate }) {
         // Parallax for Viva text (max 4px)
         const parallaxX = ((clientX - left - width / 2) / width) * 4;
         const parallaxY = ((clientY - top - height / 2) / height) * 4;
-        console.log("Calculated parallax:", { parallaxX, parallaxY });
         vivaParallaxX.set(parallaxX);
         vivaParallaxY.set(parallaxY);
 
@@ -421,25 +404,10 @@ export default function Hero({ onNavigate }) {
           {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            className="flex justify-center mb-16"
           >
             <motion.button
-              className="px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-accent to-accent-purple text-dark shadow-glow hover:shadow-2xl transition-shadow relative overflow-hidden group"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{ x: buttonMagnet.primary.x, y: buttonMagnet.primary.y }}
-              transition={{ type: "spring", stiffness: 150, damping: 15 }}
-              onMouseMove={(e) => handleCTAMouseMove(e, "primary")}
-              onMouseLeave={() => handleCTAMouseLeave("primary")}
-            >
-              <motion.span
-                className="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-colors"
-                layoutId="buttonHover"
-              ></motion.span>
-              <span className="relative">Start Your Project</span>
-            </motion.button>
-            <motion.button
-              className="px-8 py-4 rounded-lg font-semibold glass-effect text-white border border-accent/30 hover:border-accent/60 hover:bg-white/10 transition-all"
+              className="px-12 py-5 text-lg rounded-lg font-semibold glass-effect text-white border border-accent/30 hover:border-accent/60 hover:bg-white/10 transition-all"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
               animate={{

@@ -1,12 +1,28 @@
-import React from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function Footer() {
-  // Parallax: map page scroll progress to a small horizontal offset for brand text
-  const { scrollYProgress } = useScroll();
-  const rawX = useTransform(scrollYProgress, [0, 1], [-30, 30]);
-  // Smooth the motion for premium, subtle feel
-  const brandX = useSpring(rawX, { stiffness: 80, damping: 18 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const footerRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () =>
+      setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    if (isMobile || !footerRef.current) return;
+    const rect = footerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   const currentYear = new Date().getFullYear();
 
@@ -40,24 +56,34 @@ export default function Footer() {
 
   return (
     <footer
+      ref={footerRef}
       className="relative w-full bg-gradient-to-b from-[#050814] to-[#0b1220] text-white overflow-hidden"
       aria-labelledby="vorko-footer"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        "--x": `${mousePos.x}px`,
+        "--y": `${mousePos.y}px`,
+      }}
     >
       {/* Background watermark - fixed height to prevent overflow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div className="absolute inset-0 flex items-end justify-center">
-          <motion.h1
-            aria-hidden="true"
-            // scroll-driven horizontal motion + slow pulsing scale
-            style={{ x: brandX, color: "rgba(255,255,255,0.04)" }}
-            animate={{ scale: [1, 1.008, 1] }}
-            transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
-            className="footer-brand text-[clamp(6rem,18vw,22rem)] leading-none font-extrabold select-none pointer-events-none"
-          >
-            Vorko
-          </motion.h1>
-        </div>
-      </div>
+      <h1
+        aria-hidden="true"
+        className="absolute inset-0 flex items-end justify-center footer-brand text-[clamp(6rem,18vw,22rem)] leading-none font-extrabold select-none pointer-events-none transition-all duration-200 ease-out"
+        style={{
+          background:
+            isHovered && !isMobile
+              ? `radial-gradient(circle 200px at var(--x) var(--y), rgba(0,217,255,0.8), rgba(124,58,237,0.6), transparent 60%)`
+              : "none",
+          WebkitBackgroundClip: isHovered && !isMobile ? "text" : "initial",
+          backgroundClip: isHovered && !isMobile ? "text" : "initial",
+          color:
+            isHovered && !isMobile ? "transparent" : "rgba(255,255,255,0.04)",
+        }}
+      >
+        VORKO
+      </h1>
 
       {/* Foreground content - relative z-10 so background never covers it */}
       <motion.div

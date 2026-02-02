@@ -7,8 +7,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Validation: Ensure environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    "Missing Supabase environment variables. Please check .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are defined."
+  throw new Error(
+    "Missing Supabase environment variables. Please check .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are defined.",
   );
 }
 
@@ -27,23 +27,11 @@ export const checkAuthSession = async () => {
     } = await supabase.auth.getSession();
 
     if (error) {
-      console.error("Error checking auth session:", error.message);
       return null;
-    }
-
-    if (session) {
-      console.log("✓ User logged in:", {
-        email: session.user.email,
-        id: session.user.id,
-        provider: session.user.app_metadata?.provider || "unknown",
-      });
-    } else {
-      console.log("No active session");
     }
 
     return session;
   } catch (error) {
-    console.error("Unexpected error checking session:", error);
     return null;
   }
 };
