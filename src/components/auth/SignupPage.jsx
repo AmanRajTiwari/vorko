@@ -123,11 +123,81 @@ export default function SignupPage() {
             transition={{ delay: 0.1, duration: 0.4 }}
             className="text-center mb-8"
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent-purple rounded-lg flex items-center justify-center font-bold text-dark text-xl">
-                V
-              </div>
-              <span className="text-2xl font-bold glow-text">Vorko</span>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              {/* Glassmorphic V tile */}
+              <motion.div
+                className="relative flex-shrink-0"
+                style={{ width: 42, height: 42 }}
+                whileHover={{ y: -3, scale: 1.07 }}
+                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+              >
+                {/* Frosted glass body */}
+                <div
+                  className="absolute inset-0 rounded-2xl overflow-hidden"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.07)",
+                    backdropFilter: "blur(16px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                    border: "1px solid rgba(255, 255, 255, 0.18)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 24px rgba(0,217,255,0.1), 0 1px 2px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[45%] pointer-events-none"
+                    style={{
+                      background: "linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 100%)",
+                      borderRadius: "16px 16px 0 0",
+                    }}
+                  />
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: "radial-gradient(ellipse at 60% 30%, rgba(0,217,255,0.09) 0%, transparent 70%)",
+                    }}
+                  />
+                </div>
+                {/* Outer ambient glow */}
+                <div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{ boxShadow: "0 0 0 1px rgba(0,217,255,0.12), 0 8px 32px rgba(0,217,255,0.08)" }}
+                />
+                {/* V letter */}
+                <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
+                  <span
+                    className="font-black"
+                    style={{
+                      fontSize: "1.15rem",
+                      letterSpacing: "-0.04em",
+                      color: "rgba(255,255,255,0.95)",
+                      textShadow: "0 0 12px rgba(0,217,255,0.6), 0 1px 3px rgba(0,0,0,0.4)",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    V
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Chrome animated wordmark */}
+              <motion.span
+                className="font-black select-none"
+                style={{
+                  fontSize: "1.5rem",
+                  letterSpacing: "-0.055em",
+                  lineHeight: 1,
+                  background: "linear-gradient(135deg, #e8e8e8 0%, #ffffff 20%, #c0c0c0 40%, #f5f5f5 55%, #a8a8a8 70%, #ffffff 85%, #d4d4d4 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.5))",
+                }}
+                animate={{ backgroundPosition: ["0% center", "200% center"] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+              >
+                Vorko
+              </motion.span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Join Vorko</h1>
             <p className="text-gray-400">Create your account</p>
