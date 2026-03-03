@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./components/sections/Hero";
@@ -15,7 +14,7 @@ import MentorViva from "./components/sections/MentorViva";
 import Testimonials from "./components/sections/Testimonials";
 import FinalCTA from "./components/sections/FinalCTA";
 import Footer from "./components/Footer";
-import Dashboard from "./components/dashboard/Dashboard";
+
 import MentorDashboard from "./components/mentor-dashboard/MentorDashboard";
 import ProjectsPage from "./components/mentor-dashboard/pages/ProjectsPage";
 import ReviewsPage from "./components/mentor-dashboard/pages/ReviewsPage";

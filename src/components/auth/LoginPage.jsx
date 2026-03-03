@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AlertCircle, Check, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import Watermark from "../Watermark";
 
 export default function LoginPage() {
   const location = useLocation();
@@ -133,6 +134,8 @@ export default function LoginPage() {
         {/* Top-left accent orb */}
         <div className="absolute top-1/4 -left-24 w-64 h-64 bg-gradient-to-br from-accent-blue/10 to-transparent rounded-full blur-3xl opacity-30" />
       </div>
+
+      <Watermark />
 
       {/* Premium card container */}
       <motion.div

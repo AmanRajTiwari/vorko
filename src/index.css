@@ -2,35 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Lenis required CSS ───────────────────────────────────────────────────── */
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+    pointer-events: none;
+}
+
 /* Global styles */
-html,
+html {
+    overflow-x: hidden;
+}
+
 body {
     overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Hide scrollbar */
 ::-webkit-scrollbar {
-    width: 10px;
+    display: none;
 }
 
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 217, 255, 0.3);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 217, 255, 0.5);
+html,
+body {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
 }
 
 /* Performance optimizations */
 @layer base {
-    html {
-        scroll-behavior: auto;
-    }
 
     /* Prevent footer background overflow - CRITICAL FIX */
     footer {
@@ -78,14 +95,23 @@ body {
     .footer-brand {
         font-weight: 900;
         letter-spacing: -0.02em;
-        /* Use low-alpha text color instead of element opacity to avoid affecting descendants */
-        color: rgba(255, 255, 255, 0.04);
-        /* 4% subtlety */
+        /* Muted base color */
+        color: rgba(255, 255, 255, 0.04) !important;
         -webkit-text-fill-color: currentColor;
         pointer-events: none;
         user-select: none;
         transform: translateZ(0);
         will-change: transform;
+        /* Premium cursor-follow highlight effect */
+        background: radial-gradient(circle 300px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(0, 217, 255, 0.8) 0%,
+                rgba(124, 58, 237, 0.6) 30%,
+                rgba(0, 217, 255, 0.4) 60%,
+                rgba(124, 58, 237, 0.2) 80%,
+                transparent 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: background 0.2s ease-out;
     }
 
     /* Link underline slide + glow */

@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import WatermarkText from "./WatermarkText";
 
 export default function Footer() {
-  // Parallax: map page scroll progress to a small horizontal offset for brand text
-  const { scrollYProgress } = useScroll();
-  const rawX = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+  const footerRef = useRef(null);
+  const brandRef = useRef(null);
+
+  useEffect(() => {
+    // Disable on touch devices
+    if ("ontouchstart" in window) return;
+
+    const footer = footerRef.current;
+    const brand = brandRef.current;
+    if (!footer || !brand) return;
+
+    const handleMouseMove = (e) => {
+      const rect = brand.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // For highlight effect
+      const x = (mouseX / rect.width) * 100;
+      const y = (mouseY / rect.height) * 100;
+      footer.style.setProperty("--mouse-x", `${x}%`);
+      footer.style.setProperty("--mouse-y", `${y}%`);
+    };
+
+    footer.addEventListener("mousemove", handleMouseMove);
+    return () => footer.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Parallax: map footer scroll progress to horizontal offset for brand text
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end start"],
+  });
+  const rawX = useTransform(scrollYProgress, [0, 1], [-50, 50]);
   // Smooth the motion for premium, subtle feel
   const brandX = useSpring(rawX, { stiffness: 80, damping: 18 });
 
@@ -40,34 +71,24 @@ export default function Footer() {
 
   return (
     <footer
+      ref={footerRef}
       className="relative w-full bg-gradient-to-b from-[#050814] to-[#0b1220] text-white overflow-hidden"
       aria-labelledby="vorko-footer"
     >
-      {/* Background watermark - fixed height to prevent overflow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div className="absolute inset-0 flex items-end justify-center">
-          <motion.h1
-            aria-hidden="true"
-            // scroll-driven horizontal motion + slow pulsing scale
-            style={{ x: brandX, color: "rgba(255,255,255,0.04)" }}
-            animate={{ scale: [1, 1.008, 1] }}
-            transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
-            className="footer-brand text-[clamp(6rem,18vw,22rem)] leading-none font-extrabold select-none pointer-events-none"
-          >
-            Vorko
-          </motion.h1>
-        </div>
-      </div>
+      {/* Background watermark - placed behind everything but with pointer-events allowing interaction */}
+      <WatermarkText text="Vorko" className="opacity-100 z-0" />
 
-      {/* Foreground content - relative z-10 so background never covers it */}
+      {/* Foreground content - relative z-10 but with pointer-events-none on the grid container
+          so mouse events can pass through to the watermark behind it,
+          except for the links and interactive elements which we restore to auto */}
       <motion.div
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 py-20"
+        className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 py-20 pointer-events-none"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 items-start pointer-events-auto">
           {/* Left */}
           <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4">
             <div className="flex items-center gap-3">

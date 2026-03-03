@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import NodeNetwork from "./NodeNetwork";
 
 export default function Hero({ onNavigate }) {
   const navigate = useNavigate();
@@ -24,45 +25,25 @@ export default function Hero({ onNavigate }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Debug: Log parallax changes
-  useEffect(() => {
-    console.log(
-      "vivaParallaxX:",
-      vivaParallaxX.get(),
-      "vivaParallaxY:",
-      vivaParallaxY.get(),
-    );
-  }, []);
+
 
   const handleMouseMove = (e) => {
-    console.log("handleMouseMove called");
-    // Skip on mobile
     if (isMobile) return;
-
-    // Early return if section ref is not set
     if (!sectionRef.current) return;
 
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
-        // Get the section element from ref or find it
         const section = sectionRef.current;
-        if (!section) {
-          console.log("Section ref not found");
-          return;
-        }
+        if (!section) return;
 
         const { clientX, clientY } = e;
         const { left, top, width, height } = section.getBoundingClientRect();
-        console.log("Mouse position:", { clientX, clientY });
-        console.log("Section rect:", { left, top, width, height });
         const x = (clientX - left - width / 2) / 30;
         const y = (clientY - top - height / 2) / 30;
         setMousePosition({ x, y });
 
-        // Parallax for Viva text (max 4px)
         const parallaxX = ((clientX - left - width / 2) / width) * 4;
         const parallaxY = ((clientY - top - height / 2) / height) * 4;
-        console.log("Calculated parallax:", { parallaxX, parallaxY });
         vivaParallaxX.set(parallaxX);
         vivaParallaxY.set(parallaxY);
 
@@ -262,6 +243,7 @@ export default function Hero({ onNavigate }) {
       className="relative w-full pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-visible min-h-screen flex items-center"
       onMouseMove={handleMouseMove}
     >
+      <NodeNetwork containerRef={sectionRef} />
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="relative z-10"
@@ -424,21 +406,6 @@ export default function Hero({ onNavigate }) {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
             <motion.button
-              className="px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-accent to-accent-purple text-dark shadow-glow hover:shadow-2xl transition-shadow relative overflow-hidden group"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{ x: buttonMagnet.primary.x, y: buttonMagnet.primary.y }}
-              transition={{ type: "spring", stiffness: 150, damping: 15 }}
-              onMouseMove={(e) => handleCTAMouseMove(e, "primary")}
-              onMouseLeave={() => handleCTAMouseLeave("primary")}
-            >
-              <motion.span
-                className="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-colors"
-                layoutId="buttonHover"
-              ></motion.span>
-              <span className="relative">Start Your Project</span>
-            </motion.button>
-            <motion.button
               className="px-8 py-4 rounded-lg font-semibold glass-effect text-white border border-accent/30 hover:border-accent/60 hover:bg-white/10 transition-all"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
@@ -460,7 +427,7 @@ export default function Hero({ onNavigate }) {
           {/* Floating Cards - Hide on mobile, show on desktop */}
           {!isMobile && (
             <motion.div
-              className="relative h-96 mx-auto max-w-4xl hidden md:block"
+              className="hidden md:flex flex-row justify-between items-center gap-6 mx-auto max-w-3xl px-4 mb-4"
               animate={{
                 x: mousePosition.x * 0.5,
                 y: mousePosition.y * 0.5,
@@ -469,7 +436,7 @@ export default function Hero({ onNavigate }) {
             >
               {/* Tasks Card */}
               <motion.div
-                className="absolute top-0 left-0 w-40 glass-effect p-4 rounded-xl shadow-lg"
+                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
                 custom={0}
                 initial="hidden"
                 animate="visible"
@@ -479,22 +446,10 @@ export default function Hero({ onNavigate }) {
                 <motion.div
                   className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-3"
                   animate={{ y: [-2, 2, -2] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <svg
-                    className="w-6 h-6 text-accent"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
+                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                     />
                   </svg>
@@ -505,7 +460,7 @@ export default function Hero({ onNavigate }) {
 
               {/* Meetings Card */}
               <motion.div
-                className="absolute top-20 right-0 w-40 glass-effect p-4 rounded-xl shadow-lg"
+                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
                 custom={0.15}
                 initial="hidden"
                 animate="visible"
@@ -515,36 +470,21 @@ export default function Hero({ onNavigate }) {
                 <motion.div
                   className="w-10 h-10 bg-accent-purple/20 rounded-lg flex items-center justify-center mb-3"
                   animate={{ y: [-2, 2, -2] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5,
-                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                 >
-                  <svg
-                    className="w-6 h-6 text-accent-purple"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
+                  <svg className="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
                 </motion.div>
                 <h3 className="font-semibold text-sm mb-1">Meetings</h3>
-                <p className="text-xs text-gray-400">
-                  Record & review discussions
-                </p>
+                <p className="text-xs text-gray-400">Record &amp; review discussions</p>
               </motion.div>
 
               {/* Mentor Reviews Card */}
               <motion.div
-                className="absolute bottom-0 right-10 w-44 glass-effect p-4 rounded-xl shadow-lg"
+                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
                 custom={0.3}
                 initial="hidden"
                 animate="visible"
@@ -554,40 +494,17 @@ export default function Hero({ onNavigate }) {
                 <motion.div
                   className="w-10 h-10 bg-accent-blue/20 rounded-lg flex items-center justify-center mb-3"
                   animate={{ y: [-2, 2, -2] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1,
-                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 >
-                  <svg
-                    className="w-6 h-6 text-accent-blue"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
+                  <svg className="w-6 h-6 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                       d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                     />
                   </svg>
                 </motion.div>
                 <h3 className="font-semibold text-sm mb-1">Mentor Reviews</h3>
-                <p className="text-xs text-gray-400">Feedback & guidance</p>
+                <p className="text-xs text-gray-400">Feedback &amp; guidance</p>
               </motion.div>
-
-              {/* Central Glow Circle */}
-              <motion.div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-accent/20 to-accent-purple/20 rounded-full blur-2xl"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-              ></motion.div>
             </motion.div>
           )}
 

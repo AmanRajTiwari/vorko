@@ -44,8 +44,6 @@ export default function Navbar({ onNavigate }) {
     { label: "Home", href: "#" },
     { label: "Features", href: "#features" },
     { label: "How it Works", href: "#how-it-works" },
-    { label: "Mentors", href: "#mentors" },
-    { label: "Reports", href: "#reports" },
   ];
 
   const handleMentorDashboard = () => {
@@ -95,29 +93,99 @@ export default function Navbar({ onNavigate }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between relative z-10">
         {/* Logo - Left */}
         <motion.div
-          className="flex items-center gap-2.5 cursor-pointer flex-shrink-0"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            delay: 0.2,
-            duration: 0.6,
-            ease: [0.25, 0.46, 0.45, 0.94],
-          }}
-          whileHover={{ scale: 1.05 }}
+          className="flex items-center gap-3 cursor-pointer flex-shrink-0"
+          initial={{ opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          whileHover="hovered"
           onClick={() => navigate("/")}
         >
+          {/* ── Glassmorphic "V" tile ── */}
           <motion.div
-            className="w-9 h-9 bg-gradient-to-br from-accent to-accent-purple rounded-lg flex items-center justify-center font-bold text-dark text-sm shadow-lg"
-            animate={{
-              boxShadow: isScrolled
-                ? "0 0 15px rgba(0, 217, 255, 0.4)"
-                : "0 0 10px rgba(0, 217, 255, 0.2)",
-            }}
-            transition={{ duration: 0.3 }}
+            className="relative flex-shrink-0"
+            style={{ width: 42, height: 42 }}
+            variants={{ hovered: { y: -3, scale: 1.07 } }}
+            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
           >
-            V
+            {/* Frosted glass body */}
+            <div
+              className="absolute inset-0 rounded-2xl overflow-hidden"
+              style={{
+                background: "rgba(255, 255, 255, 0.07)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                border: "1px solid rgba(255, 255, 255, 0.18)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 24px rgba(0,217,255,0.1), 0 1px 2px rgba(0,0,0,0.4)",
+              }}
+            >
+              {/* Top gloss streak */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[45%] pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 100%)",
+                  borderRadius: "16px 16px 0 0",
+                }}
+              />
+              {/* Subtle cyan tint bloom */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at 60% 30%, rgba(0,217,255,0.09) 0%, transparent 70%)",
+                }}
+              />
+            </div>
+
+            {/* Outer ambient glow */}
+            <motion.div
+              className="absolute inset-0 rounded-2xl pointer-events-none"
+              style={{ boxShadow: "0 0 0 1px rgba(0,217,255,0.12), 0 8px 32px rgba(0,217,255,0.08)" }}
+              variants={{ hovered: { boxShadow: "0 0 0 1px rgba(0,217,255,0.3), 0 12px 36px rgba(0,217,255,0.2)" } }}
+              transition={{ duration: 0.3 }}
+            />
+
+            {/* V letter */}
+            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
+              <span
+                className="font-black"
+                style={{
+                  fontSize: "1.15rem",
+                  letterSpacing: "-0.04em",
+                  color: "rgba(255,255,255,0.95)",
+                  textShadow: "0 0 12px rgba(0,217,255,0.6), 0 1px 3px rgba(0,0,0,0.4)",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                V
+              </span>
+            </div>
           </motion.div>
-          <span className="text-lg font-bold glow-text inline">Vorko</span>
+
+          {/* ── Premium chrome wordmark ── */}
+          <div className="flex flex-col leading-none">
+            <motion.span
+              className="font-black select-none"
+              style={{
+                fontSize: "1.3rem",
+                letterSpacing: "-0.055em",
+                lineHeight: 1,
+                background: "linear-gradient(135deg, #e8e8e8 0%, #ffffff 20%, #c0c0c0 40%, #f5f5f5 55%, #a8a8a8 70%, #ffffff 85%, #d4d4d4 100%)",
+                backgroundSize: "200% auto",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.5))",
+              }}
+              animate={{ backgroundPosition: ["0% center", "200% center"] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+              variants={{ hovered: { filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.5)) drop-shadow(0 0 12px rgba(255,255,255,0.3))" } }}
+            >
+              Vorko
+            </motion.span>
+
+          </div>
         </motion.div>
 
         {/* Center Navigation - Desktop Only */}
