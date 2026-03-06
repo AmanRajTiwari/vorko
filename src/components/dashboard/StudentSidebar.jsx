@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ArrowLeft,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const menuItems = [
   { label: "Dashboard",  icon: LayoutDashboard, path: "/student/dashboard" },
@@ -51,7 +52,8 @@ export default function StudentSidebar({ isCollapsed, setIsCollapsed, onClose })
       >
         {/* Logo */}
         <div
-          className="flex items-center gap-2.5 overflow-hidden"
+          onClick={() => handleNav("/")}
+          className="flex items-center gap-3 overflow-hidden cursor-pointer"
           style={{
             opacity: isCollapsed ? 0 : 1,
             width: isCollapsed ? 0 : "auto",
@@ -60,14 +62,77 @@ export default function StudentSidebar({ isCollapsed, setIsCollapsed, onClose })
             whiteSpace: "nowrap",
           }}
         >
-          {/* V icon */}
+          {/* Glassmorphic "V" tile (from Navbar) */}
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-dark font-black text-sm flex-shrink-0"
-            style={{ background: "linear-gradient(135deg,#00d9ff,#a78bfa)" }}
+            className="relative flex-shrink-0 group"
+            style={{ width: 32, height: 32 }}
           >
-            V
+            {/* Frosted glass body */}
+            <div
+              className="absolute inset-0 rounded-xl overflow-hidden transition-transform duration-300 group-hover:scale-105"
+              style={{
+                background: "rgba(255, 255, 255, 0.07)",
+                backdropFilter: "blur(16px) saturate(180%)",
+                WebkitBackdropFilter: "blur(16px) saturate(180%)",
+                border: "1px solid rgba(255, 255, 255, 0.18)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 24px rgba(0,217,255,0.1)",
+              }}
+            >
+              {/* Top gloss streak */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[45%] pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 100%)",
+                  borderRadius: "12px 12px 0 0",
+                }}
+              />
+              {/* Subtle cyan tint bloom */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at 60% 30%, rgba(0,217,255,0.09) 0%, transparent 70%)",
+                }}
+              />
+            </div>
+
+            {/* V letter */}
+            <div className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105" style={{ zIndex: 2 }}>
+              <span
+                className="font-black"
+                style={{
+                  fontSize: "0.9rem",
+                  letterSpacing: "-0.04em",
+                  color: "rgba(255,255,255,0.95)",
+                  textShadow: "0 0 12px rgba(0,217,255,0.6)",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                V
+              </span>
+            </div>
           </div>
-          <span className="font-bold text-base tracking-tight text-white">Vorko</span>
+
+          {/* Premium chrome wordmark (from Navbar) */}
+          <motion.span
+            className="font-black tracking-tight"
+            style={{
+              fontSize: "1.1rem",
+              letterSpacing: "-0.04em",
+              background: "linear-gradient(135deg, #e8e8e8 0%, #ffffff 20%, #c0c0c0 40%, #f5f5f5 55%, #a8a8a8 70%, #ffffff 85%, #d4d4d4 100%)",
+              backgroundSize: "200% auto",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))",
+            }}
+            animate={{ backgroundPosition: ["0% center", "200% center"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          >
+            Vorko
+          </motion.span>
         </div>
 
         {/* Collapse toggle */}
