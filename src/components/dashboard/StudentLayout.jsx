@@ -1,74 +1,101 @@
-import React, { useContext, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import StudentSidebar from "./StudentSidebar";
 import StudentTopBar from "./StudentTopBar";
-import { StudentDataContext } from "../../context/StudentContext";
+
+const SIDEBAR_EXPANDED = 260;
+const SIDEBAR_COLLAPSED = 70;
 
 /**
- * StudentLayout - Mobile-first dashboard layout
+ * StudentLayout – SaaS AppLayout
  *
- * Structure:
- * - Mobile: Hamburger menu + header, full-width content
- * - Desktop: Sidebar (320px) + header, content offset by sidebar
- *
- * Key principles:
- * - Sidebar HIDDEN on mobile, FIXED on desktop
- * - Main content ALWAYS full-width available
- * - No flex layout conflicts
+ * Uses a flex row at the root level.
+ * Sidebar is a flex child with animated width (not fixed-positioned),
+ * so the adjacent main content naturally expands/contracts.
+ * On mobile: sidebar hidden, drawer rendered absolutely over content.
  */
 export default function StudentLayout({ children }) {
-  const { activeProject } = useContext(StudentDataContext);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const sidebarWidth = isCollapsed ? SIDEBAR_COLLAPSED : SIDEBAR_EXPANDED;
 
   return (
-    <div className="min-h-screen flex">
-      {/* ===== MOBILE OVERLAY ===== */}
+    <div className="flex min-h-screen bg-[#0a0e27] text-white relative">
+
+      {/* ── Desktop Sidebar (md+): flex child so main content expands ── */}
+      <div
+        className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden"
+        style={{
+          width: sidebarWidth,
+          minWidth: sidebarWidth,
+          transition: "width 0.3s cubic-bezier(0.4,0,0.2,1), min-width 0.3s cubic-bezier(0.4,0,0.2,1)",
+          background: "linear-gradient(180deg, #0d1128 0%, #0a0f20 100%)",
+          borderRight: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <StudentSidebar
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          onClose={() => setMobileSidebarOpen(false)}
+        />
+      </div>
+
+      {/* ── Mobile Overlay ── */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {mobileSidebarOpen && (
           <motion.div
+            key="overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/60 z-30 lg:hidden"
-            aria-hidden="true"
+            transition={{ duration: 0.18 }}
+            onClick={() => setMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
           />
         )}
       </AnimatePresence>
 
-      {/* ===== DESKTOP SIDEBAR (md+ only) ===== */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:flex-shrink-0 md:bg-dark md:border-r md:border-white/10 md:fixed md:left-0 md:top-0 md:h-screen md:z-40 md:overflow-hidden">
-        <StudentSidebar />
-      </div>
-
-      {/* ===== MOBILE SIDEBAR DRAWER ===== */}
+      {/* ── Mobile Sidebar Drawer ── */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {mobileSidebarOpen && (
           <motion.div
+            key="drawer"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ type: "spring", stiffness: 400, damping: 40 }}
-            className="fixed left-0 top-0 h-screen w-80 z-40 bg-dark lg:hidden overflow-hidden"
+            transition={{ type: "spring", stiffness: 380, damping: 38 }}
+            className="fixed left-0 top-0 h-screen z-50 md:hidden overflow-hidden flex flex-col"
+            style={{
+              width: SIDEBAR_EXPANDED,
+              background: "linear-gradient(180deg, #0d1128 0%, #0a0f20 100%)",
+              borderRight: "1px solid rgba(255,255,255,0.07)",
+            }}
           >
-            <StudentSidebar onClose={() => setSidebarOpen(false)} />
+            <StudentSidebar
+              isCollapsed={false}
+              setIsCollapsed={() => {}}
+              onClose={() => setMobileSidebarOpen(false)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ===== MAIN CONTENT AREA ===== */}
-      <div className="flex-1 ml-0 md:ml-64 flex flex-col">
-        {/* Top Navigation Bar */}
-        <div className="sticky top-0 z-50">
+      {/* ── Main Content (always fills remaining space) ── */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Sticky Topbar */}
+        <div className="sticky top-0 z-30">
           <StudentTopBar
-            sidebarOpen={sidebarOpen}
-            setSidebarOpen={setSidebarOpen}
+            isCollapsed={isCollapsed}
+            mobileSidebarOpen={mobileSidebarOpen}
+            setMobileSidebarOpen={setMobileSidebarOpen}
           />
         </div>
 
-        {/* Main Content (window scroll) */}
-        <main className="flex-1 bg-dark-lighter pt-6 px-6">{children}</main>
+        {/* Scrollable Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

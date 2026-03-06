@@ -14,6 +14,23 @@ export function ProfileDropdown() {
   const [isLoading, setIsLoading] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Derive a friendly display name from multiple sources
+  const getDisplayName = () => {
+    const { profile, user } = context;
+    if (profile?.name) return profile.name;
+    if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
+    if (user?.user_metadata?.name) return user.user_metadata.name;
+    if (user?.email) {
+      return user.email
+        .split("@")[0]
+        .replace(/[._-]/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+    return "User";
+  };
+
+  const displayName = getDisplayName();
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
@@ -43,10 +60,11 @@ export function ProfileDropdown() {
     return null;
   }
 
-  const initials = (context.profile.name || "S")
+  const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
+    .slice(0, 2)
     .toUpperCase();
 
   return (
@@ -73,7 +91,7 @@ export function ProfileDropdown() {
         {/* Name (hidden on small screens) */}
         <div className="hidden lg:flex flex-col items-start">
           <p className="text-sm font-semibold text-white">
-            {context.profile.name || "Student"}
+            {context.profile.name || displayName}
           </p>
           <p className="text-xs text-gray-400">Student</p>
         </div>
@@ -102,7 +120,7 @@ export function ProfileDropdown() {
           {/* Profile Info */}
           <div className="px-4 py-3 border-b border-white/10">
             <p className="text-sm font-semibold text-white">
-              {context.profile.name || "Student"}
+              {context.profile.name || displayName}
             </p>
             <p className="text-xs text-gray-400 truncate">
               {context.profile.email}

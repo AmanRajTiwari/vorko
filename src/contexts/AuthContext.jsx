@@ -98,6 +98,8 @@ export function AuthProvider({ children }) {
 
         if (event === "SIGNED_IN" && session?.user) {
           console.log("[Auth] SIGNED_IN event:", session.user.email);
+          // Do NOT set isAuthenticated:true until profile (and role) is loaded.
+          // This prevents LoginPage from redirecting before role is known.
           try {
             const profile = await getCurrentProfile(session.user.id);
             if (isMounted) {
@@ -105,7 +107,7 @@ export function AuthProvider({ children }) {
                 ...prev,
                 user: session.user,
                 profile: profile || prev.profile,
-                role: profile?.role || prev.role,
+                role: profile?.role || prev.role || "student",
                 isAuthenticated: true,
                 error: null,
               }));
@@ -113,9 +115,11 @@ export function AuthProvider({ children }) {
           } catch (error) {
             console.warn("[Auth] Profile fetch failed on SIGNED_IN:", error);
             if (isMounted) {
+              // Still mark as authenticated but default role to student
               setAuth((prev) => ({
                 ...prev,
                 user: session.user,
+                role: prev.role || "student",
                 isAuthenticated: true,
               }));
             }
@@ -271,6 +275,21 @@ export function AuthProvider({ children }) {
     return "/student/dashboard";
   }, [auth.role]);
 
+  // Re-fetch profile from Supabase and update state
+  // Call this after saving profile changes so topbar/dropdown updates immediately
+  const refreshProfile = useCallback(async () => {
+    const userId = auth.user?.id;
+    if (!userId) return;
+    try {
+      const profile = await getCurrentProfile(userId);
+      if (profile) {
+        setAuth((prev) => ({ ...prev, profile }));
+      }
+    } catch (err) {
+      console.warn("[Auth] refreshProfile failed:", err);
+    }
+  }, [auth.user?.id]);
+
   const value = {
     ...auth,
     login,
@@ -278,6 +297,7 @@ export function AuthProvider({ children }) {
     logout,
     hasRole,
     getDashboardUrl,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

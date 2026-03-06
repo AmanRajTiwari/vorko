@@ -44,7 +44,6 @@ export const updateUserProfile = async (userId, name, role) => {
       .update({
         name,
         role,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", userId)
       .select()

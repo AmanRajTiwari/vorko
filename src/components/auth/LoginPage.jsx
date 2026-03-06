@@ -8,7 +8,7 @@ import Watermark from "../Watermark";
 export default function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, isLoading, getDashboardUrl, isAuthenticated } = useAuth();
+  const { login, isLoading, getDashboardUrl, isAuthenticated, role } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -43,9 +43,9 @@ export default function LoginPage() {
     }
   }, [location.state]);
 
-  // Redirect to dashboard if already authenticated
+  // Redirect to dashboard if already authenticated AND role is loaded
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && role) {
       const dashboardUrl = getDashboardUrl();
       console.log(
         "[LoginPage] User authenticated, redirecting to:",
@@ -53,7 +53,7 @@ export default function LoginPage() {
       );
       navigate(dashboardUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate, getDashboardUrl]);
+  }, [isAuthenticated, role, navigate, getDashboardUrl]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

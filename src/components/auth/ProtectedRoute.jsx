@@ -36,6 +36,11 @@ export function ProtectedRoute({ children, allowedRole }) {
     });
   }
 
+  // Still loading auth state — do not redirect yet
+  if (isLoading) {
+    return null; // or a spinner component
+  }
+
   // CHECK 1: Is user authenticated?
   if (!isAuthenticated || !user) {
     console.debug("[ProtectedRoute] Not authenticated - redirecting to /login");
