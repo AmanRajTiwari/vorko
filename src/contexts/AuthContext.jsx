@@ -99,6 +99,13 @@ export function AuthProvider({ children }) {
       subscription = onAuthStateChange(async (event, session) => {
         if (!isMounted) return;
 
+        // Handle password recovery - redirect to the reset page
+        if (event === "PASSWORD_RECOVERY") {
+          console.log("[Auth] PASSWORD_RECOVERY event - redirecting to /reset-password");
+          window.location.href = "/reset-password";
+          return;
+        }
+
         if (event === "SIGNED_IN" && session?.user) {
           console.log("[Auth] SIGNED_IN event:", session.user.email);
           // Do NOT set isAuthenticated:true until profile (and role) is loaded.
