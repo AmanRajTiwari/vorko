@@ -46,7 +46,7 @@ function ProfileSection({ mentor, onUpdate }) {
       variants={containerVariants}
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold">Profile Information</h2>
           <p className="text-gray-400 text-sm mt-1">
@@ -371,7 +371,7 @@ export default function SettingsPage() {
           variants={itemVariants}
           className="bg-gradient-to-br from-white/5 to-white/2 border border-white/10 rounded-lg p-6 mb-6"
         >
-          <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <Shield className="w-6 h-6" />
@@ -413,7 +413,7 @@ export default function SettingsPage() {
           variants={itemVariants}
           className="bg-gradient-to-br from-red-500/10 to-red-600/10 border border-red-500/30 rounded-lg p-6"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-red-300 flex items-center gap-2">
                 <LogOut className="w-5 h-5" />

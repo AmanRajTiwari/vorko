@@ -92,7 +92,7 @@ function ReviewCard({ review, onApprove, onReject, onRequestChanges }) {
 
       {/* Actions */}
       {review.status === "pending" && (
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <motion.button
             onClick={() => onApprove(review.id)}
             className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 rounded-lg transition-all"

@@ -63,7 +63,7 @@ export default function Dashboard({ onNavigate }) {
 
         {/* Dashboard Content */}
         <motion.main
-          className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8"
+          className="flex-1 overflow-y-auto relative p-4 sm:p-6 lg:p-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

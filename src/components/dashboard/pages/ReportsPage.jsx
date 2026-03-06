@@ -68,16 +68,16 @@ export default function ReportsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
           <div>
-            <h1 className="text-4xl font-bold">Reports</h1>
-            <p className="text-gray-400">
+            <h1 className="text-3xl sm:text-4xl font-bold">Reports</h1>
+            <p className="text-gray-400 text-sm sm:text-base">
               Manage and submit your project reports.
             </p>
           </div>
           <motion.button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -125,9 +125,9 @@ export default function ReportsPage() {
                     <p className="text-sm text-gray-400 mb-3">
                       {report.type} Report
                     </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                    <div className="flex items-center gap-2 sm:gap-4 text-xs text-gray-400 flex-wrap">
                       <span>Submitted: {report.submissionDate}</span>
-                      <span>•</span>
+                      <span className="hidden sm:inline">•</span>
                       <span className="font-semibold">{report.status}</span>
                     </div>
                   </div>
@@ -176,7 +176,7 @@ export default function ReportsPage() {
               onClick={(e) => e.stopPropagation()}
               className="glass-effect p-8 rounded-xl border border-white/10 w-full max-w-2xl max-h-96 overflow-y-auto"
             >
-              <div className="flex items-start justify-between mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">
                     {selectedReport.title}

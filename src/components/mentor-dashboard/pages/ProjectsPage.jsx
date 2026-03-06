@@ -61,7 +61,7 @@ function ProjectCard({ project, onClick }) {
       </div>
 
       {/* Info Grid */}
-      <div className="grid grid-cols-3 gap-4 mb-4 py-4 border-t border-white/10">
+      <div className="flex flex-wrap gap-4 mb-4 py-4 border-t border-white/10">
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-gray-400" />
           <span className="text-sm">{project.teamCount} members</span>

@@ -34,8 +34,8 @@ export default function ProjectsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl font-bold">Projects</h1>
-        <p className="text-gray-400">Manage and track all your projects.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold">Projects</h1>
+        <p className="text-gray-400 text-sm sm:text-base">Manage and track all your projects.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

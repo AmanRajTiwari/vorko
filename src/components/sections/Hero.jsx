@@ -18,11 +18,7 @@ export default function Hero({ onNavigate }) {
   const magnetTicking = useRef(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Resize listener intentionally removed; use CSS breakpoints instead.
   }, []);
 
 
@@ -424,27 +420,27 @@ export default function Hero({ onNavigate }) {
             </motion.button>
           </motion.div>
 
-          {/* Floating Cards - Hide on mobile, show on desktop */}
-          {!isMobile && (
+          {/* Floating Cards - Hide on mobile, show on desktop in arc formation */}
+          <div className="hidden md:flex pb-24 mt-4">
             <motion.div
-              className="hidden md:flex flex-row justify-between items-center gap-6 mx-auto max-w-3xl px-4 mb-4"
+              className="flex-row justify-center items-start gap-4 lg:gap-10 mx-auto w-full max-w-4xl px-4 flex"
               animate={{
                 x: mousePosition.x * 0.5,
                 y: mousePosition.y * 0.5,
               }}
               transition={{ type: "spring", stiffness: 150, damping: 15 }}
             >
-              {/* Tasks Card */}
+              {/* Tasks Card - Top Left */}
               <motion.div
-                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
+                className="flex-1 max-w-[260px] glass-effect p-6 rounded-2xl shadow-xl transform -rotate-3 translate-y-4 hover:z-20 relative"
                 custom={0}
                 initial="hidden"
                 animate="visible"
                 variants={cardEntryVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
+                whileHover={{ scale: 1.05, y: -2, rotate: 0 }}
               >
                 <motion.div
-                  className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-3"
+                  className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-4"
                   animate={{ y: [-2, 2, -2] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -454,45 +450,21 @@ export default function Hero({ onNavigate }) {
                     />
                   </svg>
                 </motion.div>
-                <h3 className="font-semibold text-sm mb-1">Tasks</h3>
-                <p className="text-xs text-gray-400">Track all project tasks</p>
+                <h3 className="font-bold text-base mb-2">Tasks</h3>
+                <p className="text-sm text-gray-400">Track all project tasks</p>
               </motion.div>
 
-              {/* Meetings Card */}
+              {/* Mentor Reviews Card - Center Bottom (Arc) */}
               <motion.div
-                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
+                className="flex-1 max-w-[280px] glass-effect p-6 rounded-2xl shadow-2xl relative z-10 transform translate-y-16 lg:translate-y-24 scale-105 border-accent/20 border"
                 custom={0.15}
                 initial="hidden"
                 animate="visible"
                 variants={cardEntryVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
+                whileHover={{ scale: 1.1, y: 12 }}
               >
                 <motion.div
-                  className="w-10 h-10 bg-accent-purple/20 rounded-lg flex items-center justify-center mb-3"
-                  animate={{ y: [-2, 2, -2] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                >
-                  <svg className="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </motion.div>
-                <h3 className="font-semibold text-sm mb-1">Meetings</h3>
-                <p className="text-xs text-gray-400">Record &amp; review discussions</p>
-              </motion.div>
-
-              {/* Mentor Reviews Card */}
-              <motion.div
-                className="flex-1 glass-effect p-5 rounded-xl shadow-lg"
-                custom={0.3}
-                initial="hidden"
-                animate="visible"
-                variants={cardEntryVariants}
-                whileHover={{ scale: 1.05, y: -5 }}
-              >
-                <motion.div
-                  className="w-10 h-10 bg-accent-blue/20 rounded-lg flex items-center justify-center mb-3"
+                  className="w-12 h-12 bg-accent-blue/20 rounded-xl flex items-center justify-center mb-4"
                   animate={{ y: [-2, 2, -2] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 >
@@ -502,91 +474,113 @@ export default function Hero({ onNavigate }) {
                     />
                   </svg>
                 </motion.div>
-                <h3 className="font-semibold text-sm mb-1">Mentor Reviews</h3>
-                <p className="text-xs text-gray-400">Feedback &amp; guidance</p>
+                <h3 className="font-bold text-base mb-2">Mentor Reviews</h3>
+                <p className="text-sm text-gray-400">Feedback &amp; guidance</p>
+              </motion.div>
+
+              {/* Meetings Card - Top Right */}
+              <motion.div
+                className="flex-1 max-w-[260px] glass-effect p-6 rounded-2xl shadow-xl transform rotate-3 translate-y-4 hover:z-20 relative"
+                custom={0.3}
+                initial="hidden"
+                animate="visible"
+                variants={cardEntryVariants}
+                whileHover={{ scale: 1.05, y: -2, rotate: 0 }}
+              >
+                <motion.div
+                  className="w-12 h-12 bg-accent-purple/20 rounded-xl flex items-center justify-center mb-4"
+                  animate={{ y: [-2, 2, -2] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                >
+                  <svg className="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </motion.div>
+                <h3 className="font-bold text-base mb-2">Meetings</h3>
+                <p className="text-sm text-gray-400">Record &amp; review discussions</p>
               </motion.div>
             </motion.div>
-          )}
+          </div>
 
-          {/* Mobile Dashboard Preview */}
-          {isMobile && (
-            <motion.div
-              className="md:hidden mb-12 mx-auto max-w-sm"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
-            >
-              <div className="glass-effect rounded-2xl p-6 space-y-4">
-                <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                  <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-accent"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm">Tasks</h4>
-                    <p className="text-xs text-gray-400">
-                      Track all project tasks
-                    </p>
-                  </div>
+          {/* Mobile Dashboard Preview (pure CSS block on mobile, hidden on tablet+) */}
+          <motion.div
+            className="md:hidden mb-12 mx-auto max-w-sm"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
+          >
+            <div className="glass-effect rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-accent"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                    />
+                  </svg>
                 </div>
-                <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                  <div className="w-8 h-8 bg-accent-purple/20 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-accent-purple"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm">Meetings</h4>
-                    <p className="text-xs text-gray-400">
-                      Record & review discussions
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-accent-blue/20 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-accent-blue"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm">Mentor Reviews</h4>
-                    <p className="text-xs text-gray-400">Feedback & guidance</p>
-                  </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Tasks</h4>
+                  <p className="text-xs text-gray-400">
+                    Track all project tasks
+                  </p>
                 </div>
               </div>
-            </motion.div>
-          )}
+              <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 bg-accent-purple/20 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-accent-purple"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Meetings</h4>
+                  <p className="text-xs text-gray-400">
+                    Record & review discussions
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-accent-blue/20 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-accent-blue"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Mentor Reviews</h4>
+                  <p className="text-xs text-gray-400">Feedback & guidance</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Stats or Trust Indicators */}
           <motion.div

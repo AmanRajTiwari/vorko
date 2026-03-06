@@ -36,7 +36,7 @@ export default function MentorViva() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             <span className="gradient-text">Mentor & Viva Mode</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -162,7 +162,7 @@ export default function MentorViva() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-16 glass-effect p-8 rounded-xl border border-accent/20 bg-gradient-to-r from-accent/5 to-accent-purple/5"
         >
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-accent-purple flex items-center justify-center flex-shrink-0">
               <svg
                 className="w-8 h-8 text-dark"

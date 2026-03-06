@@ -96,16 +96,16 @@ export default function TasksPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
           <div>
-            <h1 className="text-4xl font-bold">Tasks</h1>
-            <p className="text-gray-400">
+            <h1 className="text-3xl sm:text-4xl font-bold">Tasks</h1>
+            <p className="text-gray-400 text-sm sm:text-base">
               Manage your project tasks and deadlines.
             </p>
           </div>
           <motion.button
             onClick={() => setShowAddTask(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -116,7 +116,7 @@ export default function TasksPage() {
       </motion.div>
 
       {/* Stats */}
-      <div className="flex gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {taskStats.map((stat, idx) => (
           <motion.div
             key={idx}

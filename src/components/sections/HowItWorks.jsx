@@ -65,7 +65,7 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             <span className="gradient-text">How Vorko Works</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">

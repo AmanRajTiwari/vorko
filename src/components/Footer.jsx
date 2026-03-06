@@ -88,9 +88,9 @@ export default function Footer() {
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 py-20 pointer-events-none"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 items-start pointer-events-auto">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-8 items-start pointer-events-auto">
           {/* Left */}
-          <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4">
+          <div className="w-full lg:w-1/4 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00d9ff] to-[#7c3aed] flex items-center justify-center text-black font-bold shadow-sm">
                 V
@@ -153,7 +153,7 @@ export default function Footer() {
           </div>
 
           {/* Center columns */}
-          <div className="md:col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="w-full lg:w-2/4 grid grid-cols-2 sm:grid-cols-3 gap-6">
             {columns.map((col) => (
               <div key={col.title}>
                 <h4 className="text-white tracking-wide font-semibold mb-3">
@@ -176,7 +176,7 @@ export default function Footer() {
           </div>
 
           {/* Right contact */}
-          <div className="md:col-span-1 lg:col-span-1">
+          <div className="w-full lg:w-1/4">
             <h4 className="text-white tracking-wide font-semibold mb-3">
               Contact
             </h4>

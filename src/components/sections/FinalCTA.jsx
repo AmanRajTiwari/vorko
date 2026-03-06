@@ -38,7 +38,7 @@ export default function FinalCTA() {
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
                 Ready to Transform Your{" "}
                 <span className="gradient-text">Project?</span>
               </h2>

@@ -48,8 +48,8 @@ export default function Problem() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            <span className="gradient-text">The Problem</span> with Traditional
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            <span className="gradient-text flex-col inline-block mt-2">The Problem</span><br className="hidden sm:block" /> with Traditional
             Project Management
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">

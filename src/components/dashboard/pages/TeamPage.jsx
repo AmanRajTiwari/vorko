@@ -17,8 +17,8 @@ export default function TeamPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl font-bold">Team Members</h1>
-        <p className="text-gray-400">
+        <h1 className="text-3xl sm:text-4xl font-bold">Team Members</h1>
+        <p className="text-gray-400 text-sm sm:text-base">
           View your team and contribution insights.
         </p>
       </motion.div>

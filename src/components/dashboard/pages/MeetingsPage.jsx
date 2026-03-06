@@ -35,16 +35,16 @@ export default function MeetingsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
           <div>
-            <h1 className="text-4xl font-bold">Meetings</h1>
-            <p className="text-gray-400">
+            <h1 className="text-3xl sm:text-4xl font-bold">Meetings</h1>
+            <p className="text-gray-400 text-sm sm:text-base">
               Track and manage your project meetings.
             </p>
           </div>
           <motion.button
             onClick={() => setShowAddMeeting(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-accent-purple text-dark font-semibold hover:shadow-lg transition-shadow"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -137,22 +137,22 @@ export default function MeetingsPage() {
                 onClick={() => setSelectedMeeting(meeting)}
                 className="glass-effect p-6 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                   <div className="flex-1">
                     <h3 className="font-bold mb-2">{meeting.title}</h3>
                     <p className="text-sm text-gray-400 mb-3">
                       {meeting.description}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-2 sm:gap-4 text-sm text-gray-400 flex-wrap">
                       <span>
                         {meeting.date} at {meeting.time}
                       </span>
-                      <span>•</span>
+                      <span className="hidden sm:inline">•</span>
                       <span>{meeting.attendees.length} attendees</span>
                     </div>
                   </div>
                   {meeting.notes && (
-                    <div className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold">
+                    <div className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold w-fit">
                       Notes Added
                     </div>
                   )}
@@ -190,7 +190,7 @@ export default function MeetingsPage() {
                   <p className="text-gray-300">{selectedMeeting.description}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-400 mb-1">Date & Time</p>
                     <p className="text-gray-300">

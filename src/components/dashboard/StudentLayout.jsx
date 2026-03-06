@@ -93,7 +93,7 @@ export default function StudentLayout({ children }) {
         </div>
 
         {/* Scrollable Page Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto relative">
           {children}
         </main>
       </div>

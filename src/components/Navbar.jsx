@@ -190,7 +190,7 @@ export default function Navbar({ onNavigate }) {
 
         {/* Center Navigation - Desktop Only */}
         <motion.div
-          className="hidden lg:flex items-center gap-1"
+          className="hidden md:flex items-center gap-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}

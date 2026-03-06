@@ -80,7 +80,7 @@ function ReportCard({ report, onDownload, onPreview }) {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <motion.button
           onClick={() => onPreview(report.id)}
           className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"

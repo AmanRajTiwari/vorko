@@ -32,8 +32,8 @@ export default function VivaModePages() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl font-bold">Viva Mode</h1>
-        <p className="text-gray-400">
+        <h1 className="text-3xl sm:text-4xl font-bold">Viva Mode</h1>
+        <p className="text-gray-400 text-sm sm:text-base">
           Professional viva preparation and evidence dashboard.
         </p>
       </motion.div>
@@ -74,7 +74,7 @@ export default function VivaModePages() {
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-white/10">
+      <div className="flex overflow-x-auto gap-4 border-b border-white/10 pb-1 scrollbar-hide">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
