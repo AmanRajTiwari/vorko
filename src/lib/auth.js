@@ -33,6 +33,29 @@ export const signUpWithEmail = async (email, password) => {
 };
 
 /**
+ * Check if an email is already registered using the custom RPC
+ */
+export const checkEmailRegistered = async (email) => {
+  try {
+    if (!email || !email.includes("@")) return false;
+    
+    const { data, error } = await supabase.rpc("check_email_exists", {
+      lookup_email: email,
+    });
+
+    if (error) {
+      console.warn("Error checking email existence:", error.message);
+      return false; // Fail open if RPC fails or isn't set up yet
+    }
+
+    return !!data;
+  } catch (error) {
+    console.error("Check email error:", error);
+    return false;
+  }
+};
+
+/**
  * Update user profile with name and role
  * Called AFTER login when session is active
  * Updates the profile created by the database trigger
@@ -158,6 +181,46 @@ export const signOut = async () => {
 };
 
 /**
+ * Request a password reset email
+ */
+export const resetPasswordForEmail = async (email) => {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Password reset request error:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update user password (used after clicking reset link)
+ */
+export const updateUserPassword = async (newPassword) => {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Password update error:", error);
+    throw error;
+  }
+};
+
+/**
  * Get current session
  */
 export const getSession = async () => {
@@ -201,10 +264,10 @@ export const onAuthStateChange = (callback) => {
       callback(event, session);
     });
 
-    // Return the subscription object from data
-    return data?.subscription || { unsubscribe: () => {} };
-  } catch (error) {
-    console.warn("Error setting up auth state listener:", error);
-    return { unsubscribe: () => {} };
-  }
-};
+      // Return the subscription object from data
+      return data?.subscription || { unsubscribe: () => {} };
+    } catch (error) {
+      console.warn("Error setting up auth state listener:", error);
+      return { unsubscribe: () => {} };
+    }
+  };

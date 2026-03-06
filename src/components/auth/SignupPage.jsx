@@ -7,7 +7,7 @@ import Watermark from "../Watermark";
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const { signup, isLoading } = useAuth();
+  const { signup, isLoading, checkEmail } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -19,6 +19,7 @@ export default function SignupPage() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [formErrors, setFormErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,6 +28,30 @@ export default function SignupPage() {
       [name]: value,
     }));
     setError("");
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+
+  const handleEmailBlur = async () => {
+    const email = formData.email.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return; // Basic validation handled by validateForm
+    }
+
+    setIsCheckingEmail(true);
+    try {
+      const isRegistered = await checkEmail(email);
+      if (isRegistered) {
+        setFormErrors((prev) => ({ ...prev, email: "This email is already registered." }));
+      }
+    } catch (err) {
+      console.error("Email check failed", err);
+    } finally {
+      setIsCheckingEmail(false);
+    }
   };
 
   const handleRoleChange = (role) => {
@@ -37,27 +62,30 @@ export default function SignupPage() {
   };
 
   const validateForm = () => {
+    const errors = {};
+
     if (!formData.name.trim()) {
-      setError("Name is required");
-      return false;
+      errors.name = "Name is required";
     }
 
-    if (!formData.email.includes("@")) {
-      setError("Please enter a valid email");
-      return false;
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return false;
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return false;
+      errors.confirmPassword = "Passwords do not match";
     }
 
-    return true;
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -94,7 +122,12 @@ export default function SignupPage() {
         });
       }, 300);
     } catch (err) {
-      setError(err.message || "Signup failed. Please try again.");
+      const errorMessage = err.message || "Signup failed. Please try again.";
+      if (errorMessage.toLowerCase().includes("already registered")) {
+        setFormErrors((prev) => ({ ...prev, email: "This email is already registered." }));
+      } else {
+        setError(errorMessage);
+      }
     }
   };
 
@@ -279,8 +312,15 @@ export default function SignupPage() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Your full name"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
+                className={`w-full px-4 py-2.5 rounded-lg bg-accent/5 border ${
+                  formErrors.name ? "border-red-500/50 focus:ring-red-500/30" : "border-accent/20 focus:border-accent focus:ring-accent/30"
+                } text-white placeholder-gray-500 focus:outline-none focus:ring-1 transition-all`}
               />
+              {formErrors.name && (
+                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                  <AlertCircle size={12} /> {formErrors.name}
+                </motion.p>
+              )}
             </motion.div>
 
             {/* Email */}
@@ -289,17 +329,26 @@ export default function SignupPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <label className="text-sm font-medium text-gray-300 mb-2 block">
+              <label className="text-sm font-medium text-gray-300 mb-2 flex justify-between items-center">
                 Email Address
+                {isCheckingEmail && <span className="text-xs text-accent animate-pulse">Checking...</span>}
               </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                onBlur={handleEmailBlur}
                 placeholder="name@vorko.com"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
+                className={`w-full px-4 py-2.5 rounded-lg bg-accent/5 border ${
+                  formErrors.email ? "border-red-500/50 focus:ring-red-500/30" : "border-accent/20 focus:border-accent focus:ring-accent/30"
+                } text-white placeholder-gray-500 focus:outline-none focus:ring-1 transition-all`}
               />
+              {formErrors.email && (
+                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                  <AlertCircle size={12} /> {formErrors.email}
+                </motion.p>
+              )}
             </motion.div>
 
             {/* Password */}
@@ -317,8 +366,15 @@ export default function SignupPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
+                className={`w-full px-4 py-2.5 rounded-lg bg-accent/5 border ${
+                  formErrors.password ? "border-red-500/50 focus:ring-red-500/30" : "border-accent/20 focus:border-accent focus:ring-accent/30"
+                } text-white placeholder-gray-500 focus:outline-none focus:ring-1 transition-all`}
               />
+              {formErrors.password && (
+                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                  <AlertCircle size={12} /> {formErrors.password}
+                </motion.p>
+              )}
             </motion.div>
 
             {/* Confirm Password */}
@@ -336,8 +392,15 @@ export default function SignupPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-lg bg-accent/5 border border-accent/20 text-white placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
+                className={`w-full px-4 py-2.5 rounded-lg bg-accent/5 border ${
+                  formErrors.confirmPassword ? "border-red-500/50 focus:ring-red-500/30" : "border-accent/20 focus:border-accent focus:ring-accent/30"
+                } text-white placeholder-gray-500 focus:outline-none focus:ring-1 transition-all`}
               />
+              {formErrors.confirmPassword && (
+                <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                  <AlertCircle size={12} /> {formErrors.confirmPassword}
+                </motion.p>
+              )}
             </motion.div>
 
             {/* Submit Button */}

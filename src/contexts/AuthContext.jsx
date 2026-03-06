@@ -7,6 +7,9 @@ import {
   signOut,
   getSession,
   onAuthStateChange,
+  checkEmailRegistered,
+  resetPasswordForEmail,
+  updateUserPassword,
 } from "../lib/auth";
 
 export const AuthContext = createContext();
@@ -233,6 +236,11 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Check if email exists
+  const checkEmail = useCallback(async (email) => {
+    return await checkEmailRegistered(email);
+  }, []);
+
   // Logout function
   const logout = useCallback(async () => {
     try {
@@ -250,6 +258,40 @@ export function AuthProvider({ children }) {
       });
     } catch (error) {
       console.error("[Auth] Logout error:", error);
+      setAuth((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: error.message,
+      }));
+      throw error;
+    }
+  }, []);
+
+  // Request password reset email
+  const resetPassword = useCallback(async (email) => {
+    try {
+      setAuth((prev) => ({ ...prev, isLoading: true, error: null }));
+      await resetPasswordForEmail(email);
+      setAuth((prev) => ({ ...prev, isLoading: false }));
+      return true;
+    } catch (error) {
+      setAuth((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: error.message,
+      }));
+      throw error;
+    }
+  }, []);
+
+  // Update password
+  const updatePassword = useCallback(async (newPassword) => {
+    try {
+      setAuth((prev) => ({ ...prev, isLoading: true, error: null }));
+      await updateUserPassword(newPassword);
+      setAuth((prev) => ({ ...prev, isLoading: false }));
+      return true;
+    } catch (error) {
       setAuth((prev) => ({
         ...prev,
         isLoading: false,
@@ -295,6 +337,9 @@ export function AuthProvider({ children }) {
     login,
     signup,
     logout,
+    checkEmail,
+    resetPassword,
+    updatePassword,
     hasRole,
     getDashboardUrl,
     refreshProfile,

@@ -38,6 +38,8 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppLoader } from "./components/AppLoader";
 import LoginPage from "./components/auth/LoginPage";
 import SignupPage from "./components/auth/SignupPage";
+import ForgotPasswordPage from "./components/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./components/auth/ResetPasswordPage";
 
 function LandingPage({ onNavigate }) {
   return (
@@ -75,6 +77,8 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage onNavigate={(page) => {}} />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       {/* Protected Student Routes */}
       <Route

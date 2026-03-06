@@ -25,6 +25,7 @@ export default function LoginPage() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(location.state?.message || "");
+  const [formErrors, setFormErrors] = useState({});
 
   // Load pending data from sessionStorage (from signup flow)
   useEffect(() => {
@@ -62,14 +63,32 @@ export default function LoginPage() {
       [name]: value,
     }));
     setError("");
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!formData.email || !formData.password) {
-      setError("Please fill in all fields");
+    if (!validateForm()) {
       return;
     }
 
@@ -97,8 +116,13 @@ export default function LoginPage() {
       // 3. Redirect happens immediately when auth is ready
       // 4. No timing issues or race conditions
     } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
-      console.error("[LoginPage] Login error:", err);
+      const errorMessage = err.message || "Login failed. Please try again.";
+      if (errorMessage.toLowerCase().includes("invalid login credentials")) {
+        setFormErrors({ email: "Invalid email or password", password: "Invalid email or password" });
+      } else {
+        setError(errorMessage);
+        console.error("[LoginPage] Login error:", err);
+      }
     }
   };
 
@@ -326,9 +350,11 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="you@company.com"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/8 focus:ring-2 focus:ring-accent/20 backdrop-blur-sm"
+                  className={`w-full px-4 py-3 rounded-xl bg-white/5 border ${
+                    formErrors.email ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/30" : "border-white/15 focus:border-accent/50 focus:ring-accent/20"
+                  } text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:bg-white/8 focus:ring-2 backdrop-blur-sm`}
                 />
-                {focusedField === "email" && (
+                {focusedField === "email" && !formErrors.email && (
                   <motion.div
                     layoutId="email-focus-glow"
                     className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
@@ -338,6 +364,11 @@ export default function LoginPage() {
                   />
                 )}
               </div>
+              {formErrors.email && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-2 flex items-center gap-1.5 ml-1">
+                  <AlertCircle size={14} /> {formErrors.email}
+                </motion.div>
+              )}
             </motion.div>
 
             {/* Password Input */}
@@ -358,7 +389,9 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/8 focus:ring-2 focus:ring-accent/20 backdrop-blur-sm"
+                  className={`w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border ${
+                    formErrors.password ? "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/30" : "border-white/15 focus:border-accent/50 focus:ring-accent/20"
+                  } text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:bg-white/8 focus:ring-2 backdrop-blur-sm`}
                 />
                 <motion.button
                   type="button"
@@ -369,7 +402,7 @@ export default function LoginPage() {
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </motion.button>
-                {focusedField === "password" && (
+                {focusedField === "password" && !formErrors.password && (
                   <motion.div
                     layoutId="password-focus-glow"
                     className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
@@ -378,6 +411,20 @@ export default function LoginPage() {
                     exit={{ opacity: 0 }}
                   />
                 )}
+              </div>
+              {formErrors.password && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="text-red-400 text-xs mt-2 flex items-center gap-1.5 ml-1">
+                  <AlertCircle size={14} /> {formErrors.password}
+                </motion.div>
+              )}
+              
+              <div className="flex justify-end mt-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-accent hover:text-accent-purple transition-colors"
+                >
+                  Forgot Password?
+                </Link>
               </div>
             </motion.div>
 
