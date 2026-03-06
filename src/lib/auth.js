@@ -185,8 +185,13 @@ export const signOut = async () => {
  */
 export const resetPasswordForEmail = async (email) => {
   try {
+    // Use the production URL if deployed, otherwise use the current origin
+    const baseUrl = window.location.origin.includes('localhost') 
+      ? window.location.origin 
+      : 'https://vorko-l488-m67t4oq2b-aman-raj-tiwaris-projects.vercel.app';
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${baseUrl}/reset-password`,
     });
 
     if (error) {

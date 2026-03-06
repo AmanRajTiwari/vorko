@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { AlertCircle, Check, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import Watermark from "../Watermark";
-import { supabase } from "../../lib/supabase";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -17,21 +16,45 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [isVerifying, setIsVerifying] = useState(true);
+  const [hasValidToken, setHasValidToken] = useState(false);
 
-  // Check if we arrived here with an active session (from the email link)
   useEffect(() => {
-    const checkSession = async () => {
-      // Supabase automatically handles the access_token hash in the URL
-      // If valid, it establishes a session.
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error || !session) {
-        setError("Invalid or expired password reset link. Please request a new one.");
-      }
-      setIsVerifying(false);
-    };
+    // Parse the URL hash to check for recovery token
+    // Supabase sends: /#access_token=...&type=recovery
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.replace('#', ''));
+    const type = params.get('type');
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
 
-    checkSession();
+    if (type === 'recovery' && accessToken) {
+      // We have a valid recovery token — set session manually using the tokens
+      import('../../lib/supabase').then(({ supabase }) => {
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || '',
+        }).then(({ data, error }) => {
+          if (error || !data.session) {
+            setError("Invalid or expired password reset link. Please request a new one.");
+          } else {
+            setHasValidToken(true);
+          }
+          setIsVerifying(false);
+        });
+      });
+    } else {
+      // No token in hash — check if there's an active session from the PASSWORD_RECOVERY event
+      import('../../lib/supabase').then(({ supabase }) => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) {
+            setHasValidToken(true);
+          } else {
+            setError("Invalid or expired password reset link. Please request a new one.");
+          }
+          setIsVerifying(false);
+        });
+      });
+    }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -56,7 +79,6 @@ export default function ResetPasswordPage() {
     try {
       await updatePassword(password);
       setSuccess(true);
-      // Wait a moment then redirect to login
       setTimeout(() => {
         navigate("/login", { 
           state: { message: "Password updated successfully! Please log in with your new password." } 
@@ -78,7 +100,6 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-dark via-[#0f1428] to-dark-lighter flex items-center justify-center p-4 overflow-hidden">
-      {/* Premium background gradient orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.6, 0.4] }}
@@ -105,7 +126,6 @@ export default function ResetPasswordPage() {
         <div className="relative backdrop-blur-2xl bg-gradient-to-br from-white/8 via-white/5 to-white/3 rounded-2xl p-8 border border-white/15 shadow-2xl">
           <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -120,7 +140,6 @@ export default function ResetPasswordPage() {
             </motion.p>
           </motion.div>
 
-          {/* Alerts */}
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -147,7 +166,6 @@ export default function ResetPasswordPage() {
             </motion.div>
           )}
 
-          {/* Form */}
           {error && error.includes("Invalid or expired") ? (
             <div className="text-center mt-6">
               <Link
@@ -157,9 +175,8 @@ export default function ResetPasswordPage() {
                 Request New Link
               </Link>
             </div>
-          ) : !success ? (
+          ) : !success && hasValidToken ? (
             <form onSubmit={handleSubmit} className="space-y-5 mb-4">
-              {/* New Password */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -185,19 +202,9 @@ export default function ResetPasswordPage() {
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-                  {focusedField === "password" && (
-                    <motion.div
-                      layoutId="password-focus-glow"
-                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    />
-                  )}
                 </div>
               </motion.div>
 
-              {/* Confirm Password */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -216,15 +223,6 @@ export default function ResetPasswordPage() {
                     placeholder="••••••••"
                     className="w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border border-white/15 text-white placeholder-gray-500 focus:outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/8 focus:ring-2 focus:ring-accent/20 backdrop-blur-sm"
                   />
-                  {focusedField === "confirm" && (
-                    <motion.div
-                      layoutId="confirm-focus-glow"
-                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/10 to-accent-purple/10 pointer-events-none -z-10 blur-lg"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    />
-                  )}
                 </div>
               </motion.div>
 
