@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client
 // Using environment variables that start with VITE_ (Vite convention)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
 // Validation: Ensure environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -13,7 +13,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Create and export Supabase client (singleton pattern)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// We pass dummy values if env vars are missing to prevent the entire app from crashing on load
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder-project.supabase.co", 
+  supabaseAnonKey || "placeholder-key"
+);
 
 /**
  * Utility function to check the current authentication session
